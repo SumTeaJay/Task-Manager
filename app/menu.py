@@ -36,49 +36,77 @@ def write_new_task() -> None:
             logging.info("Пользователь вышел в меню.")
             break
 
-def change_task(tasks: list[dict[str, str]]) -> None:
-    type_text("Введите название задачи, данные которой вы хотите изменить.")
-    old_task = {}
+def change_deadline(task):
+    new_deadline = input()
+    try:
+        validate_deadline(new_deadline)
+    except ValueError as error:
+        type_text("Неправильный дедлайн!")
+        logging.warning(f"Пользователь ввел неправильную дату: {error}")
+        return None
+    else:
+        logging.info(f"Пользователь поменял данные параметр deadline в {task["name"]} с {task["deadline"]} на {new_deadline}")
+        return new_deadline
+
+def change_status(task):
+    type_text("Введите новый статус задачи")
+    new_status = input()
+    try:
+        validate_status(new_status)
+    except ValueError as error:
+        type_text("Неправильный статус!")
+        logging.warning(f"Пользователь ввел несуществующий статус: {error}")
+        return None
+    else: 
+        logging.info(f"Пользователь поменял данные параметр статус в {task["name"]} с {task["status"]} на {new_status}")
+        return new_status  
+
+def get_task(tasks: list[dict[str, str]]):
     name = input()
     for task in tasks:
         if task["name"] == name:
-            old_task = task     #я сделал это специально, чтобы мне не приходилось снова переназначать данные
-            break
+            return task
     else:
-        type_text("Такой задачи нет! Вы можете создать ее в меню.")
+        type_text("Такой задачи нет!")
         return None
 
-    type_text("Введите 1, если хотите изменить дедлайн задачи; введите 2, если хотите изменить статус задачи")
-    while True:
-        action = input()
-        if action == "1":
-            type_text("Введите новый дедлайн")
-            new_deadline = input()
-            try:
-                validate_deadline(new_deadline)
-            except ValueError as error:
-                type_text("Неправильный дедлайн!")
-                logging.warning(f"Пользователь ввел неправильную дату: {error}")
+def change_task(tasks: list[dict[str, str]]) -> None:
+    type_text("Введите название задачи, данные которой вы хотите изменить.")
+    old_task = get_task(tasks)
+    if old_task is not None:
+        type_text("Введите 1, если хотите изменить дедлайн задачи; введите 2, если хотите изменить статус задачи")
+        while True:
+            action = input()
+            if action == "1":
+                type_text("Введите новый дедлайн")
+                new_deadline = change_deadline(old_task)
+                if new_deadline is not None:
+                    old_task["deadline"] = new_deadline
+                    change_values(tasks, r"data\tasks.csv")
+                    type_text(f"Параметр 'deadline' в задаче '{old_task["name"]}' успешно изменен!")
+                    break
+            elif action == "2":
+                type_text("Введите новый статус задачи")
+                new_status = change_status(old_task)
+                if new_status is not None:
+                    old_task["status"] = new_status
+                    type_text(f"Параметр 'status' в задаче '{old_task["name"]}' успешно изменен!")
+                    change_values(tasks, r"data\tasks.csv")
+                    break
             else:
-                logging.info(f"Пользователь поменял данные параметр deadline в {name} с {old_task["deadline"]} на {new_deadline}")
-                old_task["deadline"] = new_deadline
-                change_values(tasks, r"data\tasks.csv")
-                break
-        elif action == "2":
-            type_text("Введите новый статус задачи")
-            new_status = input()
-            try:
-                validate_status(new_status)
-            except ValueError as error:
-                type_text("Неправильный статус!")
-                logging.warning(f"Пользователь ввел несуществующий статус: {error}")
-            else: 
-                logging.info(f"Пользователь поменял данные параметр статус в {name} с {old_task["staths"]} на {new_status}")
-                old_task["status"] = new_status      
-                change_values(tasks, r"data\tasks.csv")
-                break
-        else:
-            type_text("Что? Попробуйте еще раз.")
+                type_text("Что? Попробуйте еще раз.")
+    else:
+        return old_task
+
+def delete_task(tasks: list[dict[str, str]]) -> None:
+    type_text("Введите имя задачи, которую хотите удалить.")
+    task_to_be_deleted = get_task(tasks)
+    if task_to_be_deleted is not None:
+        del tasks[tasks.index(task_to_be_deleted)]
+        logging.info(f"Задача '{task_to_be_deleted}' была удалена")
+        change_values(tasks, r"data\tasks.csv")
+    else:
+        logging.warning(f"Пользователь попытался удалить несуществующую задачу: {task_to_be_deleted}")
         
 
 
