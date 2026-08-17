@@ -1,11 +1,11 @@
 import csv
 
-def get_values():
+def get_values(user):
     name = input("Введите название задачи: ")
     status = input("Введите статус задачи: выполнено/не выполнено ")
     deadline = input("Введите дедлайн в формате ДД.ММ.ГГГГ:")
 
-    return {"name": name, "status": status, "deadline": deadline}
+    return {"user_name": user, "name": name, "status": status, "deadline": deadline}
 
 def write_values(custom_task: list[dict[str, str]], file_name: str):
     with open(file_name, "a", encoding="utf-8", newline="") as tasks_csv:

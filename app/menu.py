@@ -4,7 +4,7 @@ from .print_tasks import *
 import logging
 
 
-def show_tasks_by_filter(tasks: list[dict[str, str]]) -> None:
+def show_tasks_by_filter(user, tasks: list[dict[str, str]]) -> None:
     type_text("Выберите фильтр: выполнено/не выполнено/вывести все")
     user_status = input()
 
@@ -15,12 +15,12 @@ def show_tasks_by_filter(tasks: list[dict[str, str]]) -> None:
         logging.warning(f"Пользователь ввел неправильный статус: {error}")
     else:
         logging.info("Вывод файлов")
-        print_task(tasks, user_status) 
+        print_task(user, tasks, user_status) 
         logging.info("Данные считаны.")   
 
-def write_new_task() -> None:
+def write_new_task(user: str) -> None:
     while True:
-        custom_task = get_values()
+        custom_task = get_values(user)
         try:
             validate_task(custom_task)
         except ValueError as error:
@@ -61,18 +61,18 @@ def change_status(task):
         logging.info(f"Пользователь поменял данные параметр статус в {task["name"]} с {task["status"]} на {new_status}")
         return new_status  
 
-def get_task(tasks: list[dict[str, str]]):
+def get_task(user: str, tasks: list[dict[str, str]]):
     name = input()
     for task in tasks:
-        if task["name"] == name:
+        if task["name"] == name and task["user_name"] == user:
             return task
     else:
         type_text("Такой задачи нет!")
         return None
 
-def change_task(tasks: list[dict[str, str]]) -> None:
+def change_task(user, tasks: list[dict[str, str]]) -> None:
     type_text("Введите название задачи, данные которой вы хотите изменить.")
-    old_task = get_task(tasks)
+    old_task = get_task(user, tasks)
     if old_task is not None:
         type_text("Введите 1, если хотите изменить дедлайн задачи; введите 2, если хотите изменить статус задачи")
         while True:
@@ -98,9 +98,9 @@ def change_task(tasks: list[dict[str, str]]) -> None:
     else:
         return old_task
 
-def delete_task(tasks: list[dict[str, str]]) -> None:
+def delete_task(user: str, tasks: list[dict[str, str]]) -> None:
     type_text("Введите имя задачи, которую хотите удалить.")
-    task_to_be_deleted = get_task(tasks)
+    task_to_be_deleted = get_task(user, tasks)
     if task_to_be_deleted is not None:
         del tasks[tasks.index(task_to_be_deleted)]
         logging.info(f"Задача '{task_to_be_deleted}' была удалена")

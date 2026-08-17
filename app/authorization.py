@@ -1,41 +1,43 @@
 from .print_tasks import type_text
 import logging
 import csv
-import re
 
 
 def check_login(users: dict[str, str], login):
     for user in users:
         if login == user["login"]:
-            raise KeyError("Такой логин уже существует! Придумайте новый!")
+            return True
+    return False
 
-def check_password(users: dict[str, str], password):
-    for user in users:
-        if password == user["password"]:
-            raise KeyError()
+def check_password(users: dict[str, str], password: str, login = None) -> True | False:
+    if login is None:
+        for user in users:
+            if password == user["password"]:
+                return True
+    else:
+        for user in users:
+            if user["login"] == login and password == user["password"]:
+                return True
+    return False        
 
 def write_new_user(login: str, password: str) -> None:
     with open(r"..\data\users", "a", encoding="utf-8", newline="") as users_csv:
         writer = csv.DictWriter(users_csv, fieldnames=["login", "password"])
         writer.writerow({"login": login, "password": password})
 
-def create_user(users: dict[str, str]) -> None:
+def create_user(users: list[dict[str, str]]) -> None:
     while True:
         type_text("Введите новый логин")
         login = input()
-        try:
-            check_login(users, login)
-        except KeyError:
-            type_text("Такой логин уже существует! Придумайте новый!")
-        else:
+        if check_login(users, login):
             break
+        else:
+            type_text("Такой логин уже существует! Придумайте новый!")
     while True:
         type_text("Введите новый пароль")
         password = input()
-        try:
-            check_password(users, password)
-        except KeyError:
-            type_text("Такой пароль уже существует! Придумайте новый!")
+        if check_password(users, password):
+            type_text("Такой пароль уже существует! Придумайте новый")
         else:
             write_new_user(login, password)
             type_text("Пользователь создан!")
@@ -43,16 +45,21 @@ def create_user(users: dict[str, str]) -> None:
             break
 
 def check_user(users: list[dict[str, str]]) -> None:
-    type_text("Введите логин")
-    login = input()
-    type_text("Введите пароль")
     while True:
-        password = input()
-        for user in users:
-            if user["login"] == login:
-                if user["password"] != password:
+        type_text("Введите логин")
+        login = input()
+        if check_login(users, login):
+            type_text("Введите пароль")
+            while True:
+                password = input()
+                if check_password(users, password, login):
+                    return login
+                else:
                     type_text("Неверный пароль!")
                     break
-            
-
-
+        else:
+            type_text("Такого логина не существует. Напишите 1, если хотите создать нового пользователя, иначе вам снова придется ввести новый логин")
+            action = input()
+            if action == "1":
+                create_user(users)
+                type_text("Введите данные пользователя снова, чтобы войти.")
