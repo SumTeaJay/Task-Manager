@@ -11,6 +11,7 @@ logging.basicConfig(
 )
 
 def main() -> None:
+    users = read_file(r"data\users.csv")
     tasks = read_file(r"data\tasks.csv")
     try:
         for task in tasks:
@@ -33,24 +34,32 @@ def main() -> None:
                     show_tasks_by_filter(tasks)
                 except Exception as error:
                     logging.critical(f"Непредвиденная ошибка: {error}")
+                    type_text("Возникла непредвиденная ошибка, из-за которой дальнейшая работа программы невозможна. Проверьте app.log")
+                    break
 
             elif action == "2":
                 try:
                     write_new_task()
                 except Exception as error:
                     logging.critical(f"Непредвиденная ошибка: {error}")
+                    type_text("Возникла непредвиденная ошибка, из-за которой дальнейшая работа программы невозможна. Проверьте app.log")
+                    break
 
             elif action == "3":
                 try:
                     change_task(tasks)
                 except Exception as error:
                     logging.critical(f"Непредвиденная ошибка: {error}")
+                    type_text("Возникла непредвиденная ошибка, из-за которой дальнейшая работа программы невозможна. Проверьте app.log")
+                    break
 
             elif action == "4":
                 try:
                     delete_task(tasks)
                 except Exception as error:
                     logging.critical(f"Непредвиденная ошибка: {error}")
+                    type_text("Возникла непредвиденная ошибка, из-за которой дальнейшая работа программы невозможна. Проверьте app.log")
+                    break
 
             elif action == "5":
                 type_text("Покеда! ;)")

@@ -1,6 +1,6 @@
 import re
 from datetime import date
-required_fields = ["name", "status", "deadline"]
+required_fields = ["user_name", "name", "status", "deadline"]
 
 def validate_name(name: str) -> None:
     if len(name) >= 150:
