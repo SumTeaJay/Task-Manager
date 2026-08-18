@@ -18,19 +18,17 @@ def main() -> None:
         for task in tasks:
             validate_task(task)
     except (OSError, ValueError, KeyError) as error:
-        print("Работа невозможна - ошибка в файле.")
-        print(f"Ошибка: {error}")
         logging.critical(error)
     else:
         logging.info("Программа запущена, данные считаны.")
-        type_text("Привет, пользователь! Что именно тебя интересует сегодня?")
+        type_text(f"Привет, {user}! Что именно тебя интересует сегодня?")
         while True:
+            tasks = read_file(r"data\tasks.csv")
+            for task in tasks:
+                validate_task(task)
             type_text("Выбери одно из пяти действий:\n1 - Вывести задачи по статусу\n2 - Записать задачу\n3 - Изменить данные задачи\n4 - Удалить задачу по имени\n5 - Выйти из программы")
             action = input()
             if action == "1":
-                tasks = read_file(r"data\tasks.csv")
-                for task in tasks:
-                    validate_task(task)
                 try:
                     show_tasks_by_filter(user, tasks)
                 except Exception as error:
@@ -40,7 +38,7 @@ def main() -> None:
 
             elif action == "2":
                 try:
-                    write_new_task()
+                    write_new_task(user)
                 except Exception as error:
                     logging.critical(f"Непредвиденная ошибка: {error}")
                     type_text("Возникла непредвиденная ошибка, из-за которой дальнейшая работа программы невозможна. Проверьте app.log")

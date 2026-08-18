@@ -21,7 +21,7 @@ def check_password(users: dict[str, str], password: str, login = None) -> True |
     return False        
 
 def write_new_user(login: str, password: str) -> None:
-    with open(r"..\data\users", "a", encoding="utf-8", newline="") as users_csv:
+    with open(r"data\users.csv", "a", encoding="utf-8", newline="\n") as users_csv:
         writer = csv.DictWriter(users_csv, fieldnames=["login", "password"])
         writer.writerow({"login": login, "password": password})
 
@@ -29,7 +29,7 @@ def create_user(users: list[dict[str, str]]) -> None:
     while True:
         type_text("Введите новый логин")
         login = input()
-        if check_login(users, login):
+        if not check_login(users, login):
             break
         else:
             type_text("Такой логин уже существует! Придумайте новый!")
@@ -42,7 +42,7 @@ def create_user(users: list[dict[str, str]]) -> None:
             write_new_user(login, password)
             type_text("Пользователь создан!")
             logging.info(f"Создан новый пользователь - {login}.")
-            break
+            return {"login": login, "password": password}
 
 def check_user(users: list[dict[str, str]]) -> None:
     while True:
@@ -61,5 +61,5 @@ def check_user(users: list[dict[str, str]]) -> None:
             type_text("Такого логина не существует. Напишите 1, если хотите создать нового пользователя, иначе вам снова придется ввести новый логин")
             action = input()
             if action == "1":
-                create_user(users)
+                users.append(create_user(users))
                 type_text("Введите данные пользователя снова, чтобы войти.")

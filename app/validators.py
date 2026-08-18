@@ -2,6 +2,12 @@ import re
 from datetime import date
 required_fields = ["user_name", "name", "status", "deadline"]
 
+def check_if_there_tasks(user: str, tasks: list[dict[str, str]]) -> None:
+    tasks = list(filter(lambda task: task["user_name"] == user, tasks))
+    if not tasks:
+        return None
+    return tasks
+
 def validate_name(name: str) -> None:
     if len(name) >= 150:
         raise ValueError(f"Название задачи слишком длинное: {len(name)} > 150")

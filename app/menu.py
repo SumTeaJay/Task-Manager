@@ -3,8 +3,10 @@ from .tasks_write import *
 from .print_tasks import *
 import logging
 
-
-def show_tasks_by_filter(user, tasks: list[dict[str, str]]) -> None:
+def show_tasks_by_filter(user: str, tasks: list[dict[str, str]]) -> None:
+    if check_if_there_tasks(user, tasks) is None:
+        type_text("У вас пока нет задач. Вы можете добавить их, написав в меню '2'")
+        return None  
     type_text("Выберите фильтр: выполнено/не выполнено/вывести все")
     user_status = input()
 
@@ -49,7 +51,6 @@ def change_deadline(task):
         return new_deadline
 
 def change_status(task):
-    type_text("Введите новый статус задачи")
     new_status = input()
     try:
         validate_status(new_status)
@@ -67,10 +68,12 @@ def get_task(user: str, tasks: list[dict[str, str]]):
         if task["name"] == name and task["user_name"] == user:
             return task
     else:
-        type_text("Такой задачи нет!")
         return None
 
 def change_task(user, tasks: list[dict[str, str]]) -> None:
+    if check_if_there_tasks(user, tasks) is None:
+        type_text("Список задач пуст! Создайте задачи, написав в меню '2'.")
+        return None
     type_text("Введите название задачи, данные которой вы хотите изменить.")
     old_task = get_task(user, tasks)
     if old_task is not None:
@@ -96,16 +99,21 @@ def change_task(user, tasks: list[dict[str, str]]) -> None:
             else:
                 type_text("Что? Попробуйте еще раз.")
     else:
-        return old_task
+        type_text("Такой задачи не существует!")
 
 def delete_task(user: str, tasks: list[dict[str, str]]) -> None:
+    if check_if_there_tasks(user, tasks) is None:
+        type_text("Список задач пуст! Создайте задачи, написав в меню '2'.")
+        return None
     type_text("Введите имя задачи, которую хотите удалить.")
     task_to_be_deleted = get_task(user, tasks)
     if task_to_be_deleted is not None:
         del tasks[tasks.index(task_to_be_deleted)]
-        logging.info(f"Задача '{task_to_be_deleted}' была удалена")
         change_values(tasks, r"data\tasks.csv")
+        type_text("Задача успешно удалена!")
+        logging.info(f"Задача '{task_to_be_deleted}' была удалена")
     else:
+        type_text("Такой задачи не существует!")
         logging.warning(f"Пользователь попытался удалить несуществующую задачу: {task_to_be_deleted}")
         
 
