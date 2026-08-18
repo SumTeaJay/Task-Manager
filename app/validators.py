@@ -1,21 +1,27 @@
 import re
 from datetime import date
 required_fields = ["user_name", "name", "status", "deadline"]
+task_filters = ["выполнено", "не выполнено", "вывести все"]
+task_status = ["выполнено", "не выполнено"]
 
-def check_if_there_tasks(user: str, tasks: list[dict[str, str]]) -> None:
+def get_user_tasks(user: str, tasks: list[dict[str, str]]) -> None:
     tasks = list(filter(lambda task: task["user_name"] == user, tasks))
     if not tasks:
         return None
     return tasks
 
 def validate_name(name: str) -> None:
-    if len(name) >= 150:
+    if len(name) > 150:
         raise ValueError(f"Название задачи слишком длинное: {len(name)} > 150")
-    if not name:
+    if not name.strip():
         raise ValueError("Отсутствует имя")
-
+    
+def validate_task_filter(task_filter: str) -> None:
+    if task_filter not in task_filters:
+        raise ValueError("Несуществующий фильтр")
+    
 def validate_status(status: str) -> None:
-    if status.lower() != "вывести все" and status.lower() != "выполнено" and status.lower() != "не выполнено":
+    if status.lower() not in task_status:
         raise ValueError("Ошибка в значении статуса задачи")
 
 def validate_deadline(deadline: str) -> None:

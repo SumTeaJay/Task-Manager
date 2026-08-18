@@ -1,6 +1,14 @@
 import logging
 
 from app import read_file, validate_task, type_text, show_tasks_by_filter, write_new_task, change_task, delete_task, check_user
+from pathlib import Path
+
+PROJECT_DIR = Path(__file__).resolve().parent
+DATA_DIR = PROJECT_DIR / "data"
+
+TASKS_FILE = DATA_DIR / "tasks.csv"
+USERS_FILE = DATA_DIR / "users.csv"
+LOG_FILE = PROJECT_DIR / "app.log"
 
 logging.basicConfig(
     filename="app.log",
@@ -11,21 +19,24 @@ logging.basicConfig(
 )
 
 def main() -> None:
-    users = read_file(r"data\users.csv")
+    users = read_file(USERS_FILE)
     user = check_user(users)
-    tasks = read_file(r"data\tasks.csv")
     try:
+        tasks = read_file(TASKS_FILE)
         for task in tasks:
             validate_task(task)
-    except (OSError, ValueError, KeyError) as error:
-        logging.critical(error)
+    except Exception:
+        logging.exception("Непредвиденная ошибка")
     else:
         logging.info("Программа запущена, данные считаны.")
         type_text(f"Привет, {user}! Что именно тебя интересует сегодня?")
         while True:
-            tasks = read_file(r"data\tasks.csv")
-            for task in tasks:
-                validate_task(task)
+            try:
+                tasks = read_file(TASKS_FILE)
+                for task in tasks:
+                    validate_task(task)
+            except (OSError, ValueError, KeyError) as error:
+                logging.critical(error)
             type_text("Выбери одно из пяти действий:\n1 - Вывести задачи по статусу\n2 - Записать задачу\n3 - Изменить данные задачи\n4 - Удалить задачу по имени\n5 - Выйти из программы")
             action = input()
             if action == "1":
@@ -66,7 +77,7 @@ def main() -> None:
                 break
                     
             else:
-                type_text("Что?\nТебе нужно ввести число от одного до трех, чтобы выполнить действие")
+                type_text("Что?\nТебе нужно ввести число от одного до пяти, чтобы выполнить действие")
                 logging.warning("Пользователь ввел неверную команду в меню.")
 
 if __name__ == "__main__":
