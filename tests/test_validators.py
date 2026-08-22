@@ -30,10 +30,10 @@ def test_validate_name_invalid(name, message):
 @pytest.mark.parametrize(
         "task",
         [
-            ({"user_name": "sum_tea_jay", "status": "выполнено", "deadline": "12.09.2007"}),
-            ({"user_name": "sum_tea_jay", "name": "name", "deadline": "12.09.2007"}),
+            ({"user": "sum_tea_jay", "status": "выполнено", "deadline": "12.09.2007"}),
+            ({"user": "sum_tea_jay", "name": "name", "deadline": "12.09.2007"}),
             ({"status": "не выполнено", "name": "name", "deadline": "12.09.2007"}),
-            ({"user_name": "user", "status": "не выполнено", "name": "name"})
+            ({"user": "user", "status": "не выполнено", "name": "name"})
         ]
 )
 def test_validate_task_headers(task):

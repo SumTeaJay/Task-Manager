@@ -1,23 +1,105 @@
-import csv
+import sqlite3
 
 def get_values(user):
     name = input("Введите название задачи: ")
     status = input("Введите статус задачи: выполнено/не выполнено ")
     deadline = input("Введите дедлайн в формате ДД.ММ.ГГГГ:")
 
-    return {"user_name": user, "name": name, "status": status, "deadline": deadline}
+    return {"user": user, "name": name, "status": status, "deadline": deadline}
 
-def write_values(custom_task: dict[str, str], file_name: str):
-    with open(file_name, "a", encoding="utf-8", newline="\n") as tasks_csv:
-        writer = csv.DictWriter(tasks_csv, fieldnames=["user_name", "name", "status", "deadline"])
-        writer.writerow(custom_task)
+def write_new_task(new_task: dict[str, str], file_name: str):
+    with sqlite3.connect(file_name) as connection:
+        cur = connection.cursor()
+        cur.execute("""
+            INSERT INTO tasks (user, name, status, deadline)
+            VALUES(?, ?, ?, ?)
+        """, (new_task["user"], new_task["name"], new_task["status"], new_task["deadline"]))
+    connection.close()
 
-def change_values(tasks: list[dict[str, str]], file_name: str):
-    with open(file_name, "w", encoding="utf-8", newline="") as tasks_csv:
-        writer = csv.DictWriter(tasks_csv, fieldnames=["user_name", "name", "status", "deadline"])
-        writer.writeheader()
-        writer.writerows(tasks)
+def write_new_user(new_user: dict[str, str], file_name: str):
+    with sqlite3.connect(file_name) as connection:
+        cur = connection.cursor()
+        cur.execute("""
+            INSERT INTO users (login, password)
+            VALUES(?, ?)
+        """, (new_user["login"], new_user["password"]))
+    connection.close()
 
-def read_file(file_name: str) -> list[dict[str, str]]:
-    with open(file_name, encoding="utf-8", newline="") as tasks_csv:
-        return list(csv.DictReader(tasks_csv))
+def remove_task(id: int, file_name: str):
+    with sqlite3.connect(file_name) as connection:
+        cur = connection.cursor()
+        cur.execute("""
+            DELETE FROM tasks WHERE id = ?
+        """, (id, ))
+    connection.close()
+
+def write_new_deadline(task_id: int, deadline: str, file_name: str):
+    with sqlite3.connect(file_name) as connection:
+        cur = connection.cursor()
+        cur.execute("""
+            UPDATE tasks
+            SET deadline = ?
+            WHERE id = ?
+        """, (deadline, task_id))
+    connection.close()
+
+def write_new_status(task_id: int, status: str, file_name: str):
+    with sqlite3.connect(file_name) as connection:
+        cur = connection.cursor()
+        cur = connection.cursor()
+        cur.execute("""
+            UPDATE tasks
+            SET status = ?
+            WHERE id = ?
+        """, (status, task_id))
+    connection.close()
+
+def read_tasks(file_name: str) -> list[dict[str, str]]:
+    with sqlite3.connect(file_name) as connection:
+        connection.row_factory = sqlite3.Row
+        cur = connection.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS tasks (
+                id INTEGER PRIMARY KEY,
+                user TEXT,
+                name VARCHAR(150),
+                status TEXT,
+                deadline TEXT,
+                FOREIGN KEY (user) REFERENCES users (login)
+            );
+        """)
+        cur.execute("""
+            SELECT * FROM tasks;
+        """)
+
+        tasks = []
+        rows = cur.fetchall()
+
+        for row in rows:
+            tasks.append(dict(row))
+    connection.close()
+    return tasks
+
+
+def read_users(file_name: str) -> list[dict[str, str]]:
+    with sqlite3.connect(file_name) as connection:
+        connection.row_factory = sqlite3.Row
+        cur = connection.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                login TEXT PRIMARY KEY UNIQUE,
+                password TEXT
+            );
+        """) 
+        cur.execute("""
+            SELECT * FROM users;
+        """)
+
+        users = []
+        rows = cur.fetchall()
+
+        for row in rows:
+            users.append(dict(row))
+    connection.close()
+
+    return users

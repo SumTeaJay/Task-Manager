@@ -1,12 +1,12 @@
 from .show_info import type_text
+from .storage import write_new_user
 import logging
-import csv
 from pathlib import Path
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = PROJECT_DIR / "data"
 
-USERS_FILE = DATA_DIR / "users.csv"
+DATA_DIR = PROJECT_DIR / "data"
+TASKS_FILE = DATA_DIR / "database.db"
 
 def check_login(users: list[dict[str, str]], login: str) -> bool:
     for user in users:
@@ -25,11 +25,6 @@ def check_password(users: dict[str, str], password: str, login = None) -> bool:
                 return True
     return False        
 
-def write_new_user(login: str, password: str) -> None:
-    with open(USERS_FILE, "a", encoding="utf-8", newline="\n") as users_csv:
-        writer = csv.DictWriter(users_csv, fieldnames=["login", "password"])
-        writer.writerow({"login": login, "password": password})
-
 def create_user(users: list[dict[str, str]]) -> dict[str, str]:
     while True:
         type_text("Введите новый логин")
@@ -44,7 +39,7 @@ def create_user(users: list[dict[str, str]]) -> dict[str, str]:
         if check_password(users, password):
             type_text("Такой пароль уже существует! Придумайте новый")
         else:
-            write_new_user(login, password)
+            write_new_user({"login": login, "password": password}, TASKS_FILE)
             type_text("Пользователь создан!")
             logging.info(f"Создан новый пользователь - {login}.")
             return {"login": login, "password": password}

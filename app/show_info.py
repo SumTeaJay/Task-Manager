@@ -1,7 +1,7 @@
 from .ui import type_text
 
 def print_tasks(user: str, tasks: list[dict[str, str]], status=None) -> None:      
-    tasks = list(filter(lambda task: task["user_name"] == user, tasks))
+    tasks = list(filter(lambda task: task["user"] == user, tasks))
     if status != "вывести все":
         tasks = list(filter(lambda task: task["status"] == status, tasks))
     if tasks:

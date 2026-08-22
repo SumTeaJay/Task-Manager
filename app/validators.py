@@ -1,11 +1,11 @@
 import re
 from datetime import date
-required_fields = ["user_name", "name", "status", "deadline"]
+required_fields = ["user", "name", "status", "deadline"]
 task_filters = ["выполнено", "не выполнено", "вывести все"]
 task_status = ["выполнено", "не выполнено"]
 
 def get_user_tasks(user: str, tasks: list[dict[str, str]]) -> None:
-    tasks = list(filter(lambda task: task["user_name"] == user, tasks))
+    tasks = list(filter(lambda task: task["user"] == user, tasks))
     if not tasks:
         return None
     return tasks
