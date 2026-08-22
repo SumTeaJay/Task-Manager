@@ -167,7 +167,7 @@ def delete_task(user: str, tasks: list[dict[str, str]]) -> None:
     if get_user_tasks(user, tasks) is None:
         type_text("Список задач пуст! Создайте задачу, выбрав опцию 'Создать задачу'.")
         return None
-    type_text("Введите id задачи, которую хотите удалить.")
+    type_text("Введите идентификатор задачи, которую хотите удалить.")
     id = int(input())
     task_to_be_deleted = get_task(id, user, tasks)
     if task_to_be_deleted is not None:
