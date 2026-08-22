@@ -2,6 +2,7 @@ from .validators import *
 from .storage import *
 from .show_info import *
 import logging
+import questionary
 from pathlib import Path
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
@@ -11,19 +12,32 @@ TASKS_FILE = DATA_DIR / "database.db"
 
 def show_tasks_by_filter(user: str, tasks: list[dict[str, str]]) -> None:
     if get_user_tasks(user, tasks) is None:
-        type_text("У вас пока нет задач. Вы можете добавить их, написав в меню '2'")
+        type_text("Список задач пуст! Создайте задачу, выбрав опцию 'Создать задачу'.")
         return None  
-    type_text("Выберите фильтр: выполнено/не выполнено/вывести все")
-    user_status = input().strip().lower()
-    try:
-        validate_task_filter(user_status)
-    except ValueError as error:
-        type_text("Неправильный фильтр!")
-        logging.warning(f"Пользователь ввел неправильный статус: {error}")
-    else:
-        logging.info("Вывод файлов")
-        print_tasks(user, tasks, user_status) 
-        logging.info("Данные считаны.")   
+    user_status = questionary.select(
+        "Выберите фильтр:",
+        choices=[
+            "Выполнено",
+            "Не выполнено",
+            "Вывести все"
+        ],
+        instruction="Чтобы выбрать действие, используйте стрелки на клавиатуре. Нажмите Enter, чтобы подтвердить выбор.",
+        use_indicator=True,
+        show_selected=True,
+        style=questionary.Style([
+            ("qmark", "fg:#62a874"),       
+            ("question", "bold"),             
+            ("answer", "fg:#62a874 bold"), 
+            ("pointer", "fg:#62a874 bold"),     
+            ("highlighted", "fg:#000000 bg:#62a874"),
+            ("selected", "fg:#62a874"),
+            ("instruction", ""),
+            ("text", ""),
+        ])).ask()
+
+    logging.info("Вывод файлов")
+    print_tasks(user, tasks, user_status.lower()) 
+    logging.info("Данные считаны.")   
 
 def add_new_task(user: str) -> None:
     while True:
@@ -38,8 +52,26 @@ def add_new_task(user: str) -> None:
             type_text("Задача успешно записана!")
             logging.info("Пользователь записал новую задачу.")
 
-        action = input("Введите 1, если хотите продолжить записывать задачи. Любые другие символы перейдут к выходу в меню.\n")
-        if action != "1":
+        action = questionary.select(
+                "Продолжить записывать задачи?",
+                choices=[
+                    "Продолжить",
+                    "Выйти в меню"
+                ],
+                instruction="Чтобы выбрать действие, используйте стрелки на клавиатуре. Нажмите Enter, чтобы подтвердить выбор.",
+                use_indicator=True,
+                show_selected=True,
+                style=questionary.Style([
+                    ("qmark", "fg:#62a874"),       
+                    ("question", "bold"),             
+                    ("answer", "fg:#62a874 bold"), 
+                    ("pointer", "fg:#62a874 bold"),     
+                    ("highlighted", "fg:#000000 bg:#62a874"),
+                    ("selected", "fg:#62a874"),
+                    ("instruction", ""),
+                    ("text", ""),
+                ])).ask()
+        if action == "Выйти в меню":
             logging.info("Пользователь вышел в меню.")
             break
 
@@ -76,16 +108,33 @@ def get_task(id: int, user: str, tasks: list[dict[str, str]]) -> dict[str, str] 
 
 def change_task(user, tasks: list[dict[str, str]]) -> None:
     if get_user_tasks(user, tasks) is None:
-        type_text("Список задач пуст! Создайте задачи, написав в меню '2'.")
+        type_text("Список задач пуст! Создайте задачу, выбрав опцию 'Создать задачу'.")
         return None
-    type_text("Введите id задачи, данные которой вы хотите изменить.")
+    type_text("Введите идентификатор задачи, данные которой вы хотите изменить.")
     id = int(input())
     task_to_change = get_task(id, user, tasks)
     if task_to_change is not None:
-        type_text("Введите 1, если хотите изменить дедлайн задачи; введите 2, если хотите изменить статус задачи")
         while True:
-            action = input()
-            if action == "1":
+            action = questionary.select(
+                "Вы хотите изменить дедлайн или статус задачи?",
+                choices=[
+                    "Дедлайн",
+                    "Статус"
+                ],
+                instruction="Чтобы выбрать действие, используйте стрелки на клавиатуре. Нажмите Enter, чтобы подтвердить выбор.",
+                use_indicator=True,
+                show_selected=True,
+                style=questionary.Style([
+                    ("qmark", "fg:#62a874"),       
+                    ("question", "bold"),             
+                    ("answer", "fg:#62a874 bold"), 
+                    ("pointer", "fg:#62a874 bold"),     
+                    ("highlighted", "fg:#000000 bg:#62a874"),
+                    ("selected", "fg:#62a874"),
+                    ("instruction", ""),
+                    ("text", ""),
+                ])).ask()
+            if action == "Дедлайн":
                 type_text("Введите новый дедлайн")
                 new_deadline = input()
                 try:
@@ -96,9 +145,9 @@ def change_task(user, tasks: list[dict[str, str]]) -> None:
                 else:
                     logging.info(f"Пользователь поменял данные параметр deadline в {task_to_change["id"]} с {task_to_change["deadline"]} на {new_deadline}")                    
                     write_new_deadline(task_to_change["id"], new_deadline, TASKS_FILE)
-                    type_text(f"Параметр 'deadline' в задаче '{task_to_change["id"]}' успешно изменен!")
+                    type_text(f"Дедлайн в задаче с идентификатором №{task_to_change["id"]} успешно изменен!")
                     break
-            elif action == "2":
+            elif action == "Статус":
                 type_text("Введите новый статус задачи")
                 new_status = input()
                 try:
@@ -109,16 +158,14 @@ def change_task(user, tasks: list[dict[str, str]]) -> None:
                 else:
                     logging.info(f"Пользователь поменял данные параметр status в {task_to_change["id"]} с {task_to_change["status"]} на {new_status}")                    
                     write_new_status(task_to_change["id"], new_status, TASKS_FILE)
-                    type_text(f"Параметр 'status' в задаче '{task_to_change["id"]}' успешно изменен!")
+                    type_text(f"Статус в задаче с идентификатором №{task_to_change["id"]} успешно изменен!")
                     break
-            else:
-                type_text("Что? Попробуйте еще раз.")
     else:
         type_text("Такой задачи не существует!")
 
 def delete_task(user: str, tasks: list[dict[str, str]]) -> None:
     if get_user_tasks(user, tasks) is None:
-        type_text("Список задач пуст! Создайте задачи, написав в меню '2'.")
+        type_text("Список задач пуст! Создайте задачу, выбрав опцию 'Создать задачу'.")
         return None
     type_text("Введите id задачи, которую хотите удалить.")
     id = int(input())

@@ -1,6 +1,7 @@
 from .show_info import type_text
 from .storage import write_new_user
 import logging
+import questionary
 from pathlib import Path
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
@@ -57,8 +58,25 @@ def check_user(users: list[dict[str, str]]) -> str:
                 else:
                     type_text("Неверный пароль!")
         else:
-            type_text("Такого логина не существует. Напишите 1, если хотите создать нового пользователя, иначе вам снова придется ввести новый логин")
-            action = input()
-            if action == "1":
+            action = questionary.select(
+                "Такого логина не существует. Хотите создать нового пользователя?",
+                choices=[
+                    "Создать нового пользователя",
+                    "Продолжить вводить логин"
+                ],
+                instruction="Чтобы выбрать действие, используйте стрелки на клавиатуре. Нажмите Enter, чтобы подтвердить выбор.",
+                use_indicator=True,
+                show_selected=True,
+                style=questionary.Style([
+                    ("qmark", "fg:#62a874"),       
+                    ("question", "bold"),             
+                    ("answer", "fg:#62a874 bold"), 
+                    ("pointer", "fg:#62a874 bold"),     
+                    ("highlighted", "fg:#000000 bg:#62a874"),
+                    ("selected", "fg:#62a874"),
+                    ("instruction", ""),
+                    ("text", ""),
+                ])).ask()
+            if action == "Создать нового пользователя":
                 users.append(create_user(users))
                 type_text("Введите данные пользователя снова, чтобы войти.")

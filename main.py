@@ -1,4 +1,5 @@
 import logging
+import questionary
 
 from app import read_users, read_tasks, validate_task, type_text, show_tasks_by_filter, add_new_task, change_task, delete_task, check_user
 from pathlib import Path
@@ -32,7 +33,7 @@ def main() -> None:
         return
 
     logging.info("Программа запущена, данные считаны.")
-    type_text(f"Привет, {user}! Что именно тебя интересует сегодня?")
+    type_text(f"Здравствуйте, {user}! Что именно интересует вас сегодня?")
 
     while True:
         try:
@@ -41,9 +42,29 @@ def main() -> None:
                 validate_task(task)
         except (OSError, ValueError, KeyError) as error:
             logging.critical(error)
-        type_text("Выбери одно из пяти действий:\n1 - Вывести задачи по статусу\n2 - Записать задачу\n3 - Изменить данные задачи\n4 - Удалить задачу по имени\n5 - Выйти из программы")
-        action = input()
-        if action == "1":
+        action = questionary.select(
+            "Выберите одно из пяти действий.\n",
+            choices=[
+                "Вывести задачи по статусу",
+                "Записать задачу",
+                "Изменить данные задачи",
+                "Удалить задачу по имени",
+                "Выйти из программы"
+            ],
+            instruction="Подсказка: чтобы выбрать действие, используйте стрелки на клавиатуре; нажмите Enter, чтобы подтвердить выбор.",
+            use_indicator=True,
+            show_selected=True,
+            style=questionary.Style([
+                ("qmark", "fg:#62a874"),       
+                ("question", "bold"),             
+                ("answer", "fg:#62a874 bold"), 
+                ("pointer", "fg:#62a874 bold"),     
+                ("highlighted", "fg:#000000 bg:#62a874"),
+                ("selected", "fg:#62a874"),
+                ("instruction", ""),
+                ("text", ""),
+            ])).ask()
+        if action == "Вывести задачи по статусу":
             try:
                 show_tasks_by_filter(user, tasks)
             except Exception as error:
@@ -51,7 +72,7 @@ def main() -> None:
                 type_text("Возникла непредвиденная ошибка, из-за которой дальнейшая работа программы невозможна. Проверьте app.log")
                 break
 
-        elif action == "2":
+        elif action == "Записать задачу":
             try:
                 add_new_task(user)
             except Exception as error:
@@ -59,7 +80,7 @@ def main() -> None:
                 type_text("Возникла непредвиденная ошибка, из-за которой дальнейшая работа программы невозможна. Проверьте app.log")
                 break
 
-        elif action == "3":
+        elif action == "Изменить данные задачи":
             try:
                 change_task(user, tasks)
             except Exception as error:
@@ -67,7 +88,7 @@ def main() -> None:
                 type_text("Возникла непредвиденная ошибка, из-за которой дальнейшая работа программы невозможна. Проверьте app.log")
                 break
 
-        elif action == "4":
+        elif action == "Удалить задачу по имени":
             try:
                 delete_task(user, tasks)
             except Exception as error:
@@ -75,14 +96,14 @@ def main() -> None:
                 type_text("Возникла непредвиденная ошибка, из-за которой дальнейшая работа программы невозможна. Проверьте app.log")
                 break
 
-        elif action == "5":
-            type_text("Покеда! ;)")
+        elif action == "Выйти из программы":
+            type_text("До скорой встречи!")
             logging.info("Пользователь вышел из программы.")
             break
                 
-        else:
-            type_text("Что?\nТебе нужно ввести число от одного до пяти, чтобы выполнить действие")
-            logging.warning("Пользователь ввел неверную команду в меню.")
+        # else:
+        #     type_text("Что?\nТебе нужно ввести число от одного до пяти, чтобы выполнить действие")
+        #     logging.warning("Пользователь ввел неверную команду в меню.")
 
 if __name__ == "__main__":
     main()
