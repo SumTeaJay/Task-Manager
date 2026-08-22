@@ -83,7 +83,7 @@ def check_deadline(new_deadline:str, task:dict[str, str]) -> dict[str, str] | No
         logging.warning(f"Пользователь ввел неправильную дату: {error}")
         return None
     else:
-        logging.info(f"Пользователь поменял данные параметр deadline в {task["name"]} с {task["deadline"]} на {new_deadline}")
+        logging.info(f"Пользователь поменял параметр deadline в {task["name"]} с {task["deadline"]} на {new_deadline}")
         task["deadline"] = new_deadline
         return new_deadline
 
@@ -95,7 +95,7 @@ def check_status(new_status: str, task:dict[list, list]) -> dict[str, str] | Non
         logging.warning(f"Пользователь ввел несуществующий статус: {error}")
         return None
     else: 
-        logging.info(f"Пользователь поменял данные параметр статус в {task["name"]} с {task["status"]} на {new_status}")
+        logging.info(f"Пользователь поменял параметр статус в {task["name"]} с {task["status"]} на {new_status}")
         task["status"] = new_status
         return new_status
 
