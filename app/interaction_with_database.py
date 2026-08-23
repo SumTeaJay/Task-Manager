@@ -58,6 +58,7 @@ def read_tasks(file_name: str) -> list[dict[str, str]]:
                 name VARCHAR(150),
                 status TEXT,
                 deadline TEXT,
+                PRAGMA foreign_keys = ON;
                 FOREIGN KEY (user) REFERENCES users (login)
             );
         """)

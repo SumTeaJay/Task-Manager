@@ -53,41 +53,22 @@ def main() -> None:
                 ("instruction", ""),
                 ("text", ""),
             ])).ask()
-        if action == "Вывести задачи по статусу":
-            try:
+        try:
+            if action == "Вывести задачи по статусу":
                 show_tasks_by_filter(user, tasks)
-            except Exception as error:
-                logging.critical(f"Непредвиденная ошибка: {error}")
-                type_text("Возникла непредвиденная ошибка, из-за которой дальнейшая работа программы невозможна. Проверьте app.log")
-                break
-
-        elif action == "Записать задачу":
-            try:
+            elif action == "Записать задачу":
                 add_new_task(user)
-            except Exception as error:
-                logging.critical(f"Непредвиденная ошибка: {error}")
-                type_text("Возникла непредвиденная ошибка, из-за которой дальнейшая работа программы невозможна. Проверьте app.log")
-                break
-
-        elif action == "Изменить данные задачи":
-            try:
+            elif action == "Изменить данные задачи":
                 change_task(user, tasks)
-            except Exception as error:
-                logging.critical(f"Непредвиденная ошибка: {error}")
-                type_text("Возникла непредвиденная ошибка, из-за которой дальнейшая работа программы невозможна. Проверьте app.log")
-                break
-
-        elif action == "Удалить задачу по идентификатору":
-            try:
+            elif action == "Удалить задачу по идентификатору":
                 delete_task(user, tasks)
-            except Exception as error:
-                logging.critical(f"Непредвиденная ошибка: {error}")
-                type_text("Возникла непредвиденная ошибка, из-за которой дальнейшая работа программы невозможна. Проверьте app.log")
+            elif action == "Выйти из программы":
+                type_text("До скорой встречи!")
+                logging.info("Пользователь вышел из программы.")
                 break
-
-        elif action == "Выйти из программы":
-            type_text("До скорой встречи!")
-            logging.info("Пользователь вышел из программы.")
+        except Exception as error:
+            logging.exception(f"Непредвиденная ошибка: {error}")
+            type_text("Возникла непредвиденная ошибка, из-за которой дальнейшая работа программы невозможна. Проверьте app.log")
             break
 
 if __name__ == "__main__":

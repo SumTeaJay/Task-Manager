@@ -6,4 +6,4 @@ from .interaction_with_database import write_new_task, read_tasks, read_users, w
 from .ui import type_text
 from .launch_of_program import load_config, determine_directory_of_database, create_log_file
 from .check_the_parameters import check_password, check_login, check_deadline
-from .get_the_parameters import get_task, get_parametres_of_task, filter_user_task
+from .get_the_parameters import get_task, get_parameters_of_task, filter_user_task

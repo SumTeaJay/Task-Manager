@@ -1,4 +1,4 @@
-def get_parametres_of_task(user):
+def get_parameters_of_task(user):
     name = input("Введите название задачи: ")
     status = input("Введите статус задачи: выполнено/не выполнено ")
     deadline = input("Введите дедлайн в формате ДД.ММ.ГГГГ:")

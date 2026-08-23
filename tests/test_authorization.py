@@ -27,7 +27,7 @@ def test_enter_program(monkeypatch, answers):
     )
 
     monkeypatch.setattr(
-        "app.storage.write_new_user",
+        "app.interaction_with_database.write_new_user",
         lambda user, file: None
     )
 
@@ -53,7 +53,7 @@ def test_create_user(monkeypatch):
     )
 
     monkeypatch.setattr(
-        "app.storage.write_new_user",
+        "app.interaction_with_database.write_new_user",
         lambda user, file: None
     )
 

@@ -56,7 +56,7 @@ python main.py
 ## Структура проекта
 
 ```text
-movie-library/
+Task-Manager/
 ├── app/
 │   ├── authorization.py
 │   ├── check_the_parameters.py

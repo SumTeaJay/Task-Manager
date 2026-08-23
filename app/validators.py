@@ -1,16 +1,19 @@
 import re
 from datetime import date
+from .launch_of_program import load_config
+config = load_config()
+max_length_of_task = config["limitations"]["max_length_of_task"]
 required_fields = ["user", "name", "status", "deadline"]
 task_status = ["выполнено", "не выполнено"]
 
 def validate_name(name: str) -> None:
-    if len(name) > 150:
-        raise ValueError(f"Название задачи слишком длинное: {len(name)} > 150")
+    if len(name) > max_length_of_task:
+        raise ValueError(f"Название задачи слишком длинное: {len(name)} > {max_length_of_task}")
     if not name.strip():
         raise ValueError("Отсутствует имя")
     
 def validate_status(status: str) -> None:
-    if status.lower() not in task_status:
+    if status not in task_status:
         raise ValueError("Ошибка в значении статуса задачи")
 
 def validate_deadline(deadline: str) -> None:

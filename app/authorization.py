@@ -20,13 +20,10 @@ def create_user(users: list[dict[str, str]]) -> dict[str, str]:
     while True:
         type_text("Введите новый пароль")
         password = input()
-        if check_password(users, password):
-            type_text("Такой пароль уже существует! Придумайте новый")
-        else:
-            write_new_user({"login": login, "password": password}, DATABASE_FILE)
-            type_text("Пользователь создан!")
-            logging.info(f"Создан новый пользователь - {login}.")
-            return {"login": login, "password": password}
+        write_new_user({"login": login, "password": password}, DATABASE_FILE)
+        type_text("Пользователь создан!")
+        logging.info(f"Создан новый пользователь - {login}.")
+        return {"login": login, "password": password}
 
 def enter_program(users: list[dict[str, str]]) -> str:
     while True:

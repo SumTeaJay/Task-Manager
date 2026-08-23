@@ -3,7 +3,7 @@ from .interaction_with_database import *
 from .show_info import *
 from .launch_of_program import load_config, determine_directory_of_database
 from .check_the_parameters import check_deadline
-from .get_the_parameters import get_parametres_of_task, get_task, filter_user_task
+from .get_the_parameters import get_parameters_of_task, get_task, filter_user_task
 import logging
 import questionary
 
@@ -41,7 +41,7 @@ def show_tasks_by_filter(user: str, tasks: list[dict[str, str]]) -> None:
 
 def add_new_task(user: str) -> None:
     while True:
-        custom_task = get_parametres_of_task(user)
+        custom_task = get_parameters_of_task(user)
         try:
             validate_task(custom_task)
         except ValueError as error:
@@ -107,6 +107,7 @@ def change_task(user, tasks: list[dict[str, str]]) -> None:
                 type_text("Введите новый дедлайн")
                 new_deadline = input()
                 if check_deadline(new_deadline, task_to_change) is not None:
+                    task_to_change["deadline"] = new_deadline
                     write_new_deadline(task_to_change["id"], new_deadline, DATABASE_FILE)
                     logging.info(f"Пользователь поменял данные параметр deadline в {task_to_change["id"]} с {task_to_change["deadline"]} на {new_deadline}")   
                     type_text(f"Дедлайн в задаче с идентификатором №{task_to_change["id"]} успешно изменен!")
