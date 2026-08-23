@@ -18,15 +18,12 @@ def check_login(users: list[dict[str, str]], login: str) -> bool:
     return False
 
 def check_password(users: dict[str, str], password: str, login = None) -> bool:
-    if login is None:
-        for user in users:
-            if password == user["password"]:
-                return True
-    else:
-        for user in users:
-            if user["login"] == login and password == user["password"]:
-                return True
-    return False        
+    for user in users:
+        if password == user["password"] and login is None:
+            return True    
+        elif password == user["password"] and login == user["login"]:
+            return True
+    return False
 
 def create_user(users: list[dict[str, str]]) -> dict[str, str]:
     while True:
@@ -47,13 +44,13 @@ def create_user(users: list[dict[str, str]]) -> dict[str, str]:
             logging.info(f"Создан новый пользователь - {login}.")
             return {"login": login, "password": password}
 
-def check_user(users: list[dict[str, str]]) -> str:
+def enter_program(users: list[dict[str, str]]) -> str:
     while True:
-        type_text("Введите логин")
+        type_text("Введите логин: ")
         login = input()
         if check_login(users, login):
             while True:
-                type_text("Введите пароль")
+                type_text("Введите пароль: ")
                 password = input()
                 if check_password(users, password, login):
                     return login

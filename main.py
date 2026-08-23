@@ -1,7 +1,7 @@
 import logging
 import questionary
 
-from app import read_users, read_tasks, validate_task, type_text, show_tasks_by_filter, add_new_task, change_task, delete_task, check_user, load_config
+from app import read_users, read_tasks, validate_task, type_text, show_tasks_by_filter, add_new_task, change_task, delete_task, enter_program, load_config
 from pathlib import Path
 
 config = load_config()
@@ -23,7 +23,7 @@ logging.basicConfig(
 def main() -> None:
     try:
         users = read_users(TASKS_FILE)
-        user = check_user(users)
+        user = enter_program(users)
 
         tasks = read_tasks(TASKS_FILE)
 
@@ -50,7 +50,7 @@ def main() -> None:
                 "Вывести задачи по статусу",
                 "Записать задачу",
                 "Изменить данные задачи",
-                "Удалить задачу по имени",
+                "Удалить задачу по идентификатору",
                 "Выйти из программы"
             ],
             instruction=config["ui"]["instruction_text"],
@@ -90,7 +90,7 @@ def main() -> None:
                 type_text("Возникла непредвиденная ошибка, из-за которой дальнейшая работа программы невозможна. Проверьте app.log")
                 break
 
-        elif action == "Удалить задачу по имени":
+        elif action == "Удалить задачу по идентификатору":
             try:
                 delete_task(user, tasks)
             except Exception as error:

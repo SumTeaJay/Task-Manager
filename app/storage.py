@@ -92,7 +92,7 @@ def read_users(file_name: str) -> list[dict[str, str]]:
         cur = connection.cursor()
         cur.execute("""
             CREATE TABLE IF NOT EXISTS users (
-                login TEXT PRIMARY KEY UNIQUE,
+                login TEXT PRIMARY KEY,
                 password TEXT
             );
         """) 
