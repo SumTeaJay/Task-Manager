@@ -1,4 +1,9 @@
 import sqlite3
+import tomllib
+
+def load_config() -> dict[str, str]:
+    with open("config.toml", "rb") as file:
+        return tomllib.load(file)
 
 def get_values(user):
     name = input("Введите название задачи: ")

@@ -1,13 +1,15 @@
 import logging
 import questionary
 
-from app import read_users, read_tasks, validate_task, type_text, show_tasks_by_filter, add_new_task, change_task, delete_task, check_user
+from app import read_users, read_tasks, validate_task, type_text, show_tasks_by_filter, add_new_task, change_task, delete_task, check_user, load_config
 from pathlib import Path
 
-PROJECT_DIR = Path(__file__).resolve().parent
-DATA_DIR = PROJECT_DIR / "data"
+config = load_config()
 
-TASKS_FILE = DATA_DIR / "database.db"
+PROJECT_DIR = Path(__file__).resolve().parent
+DATA_DIR = PROJECT_DIR / config["database"]["database_directory"]
+
+TASKS_FILE = DATA_DIR / config["database"]["database_file"]
 LOG_FILE = PROJECT_DIR / "app.log"
 
 logging.basicConfig(
@@ -51,16 +53,16 @@ def main() -> None:
                 "Удалить задачу по имени",
                 "Выйти из программы"
             ],
-            instruction="Подсказка: чтобы выбрать действие, используйте стрелки на клавиатуре; нажмите Enter, чтобы подтвердить выбор.",
+            instruction=config["ui"]["instruction_text"],
             use_indicator=True,
             show_selected=True,
             style=questionary.Style([
-                ("qmark", "fg:#62a874"),       
+                ("qmark", f"fg:{config["ui"]["default_color"]}"),       
                 ("question", "bold"),             
-                ("answer", "fg:#62a874 bold"), 
-                ("pointer", "fg:#62a874 bold"),     
-                ("highlighted", "fg:#000000 bg:#62a874"),
-                ("selected", "fg:#62a874"),
+                ("answer", f"fg:{config["ui"]["default_color"]} bold"), 
+                ("pointer", f"fg:{config["ui"]["default_color"]} bold"),     
+                ("highlighted", f"fg:#000000 bg:{config["ui"]["default_color"]}"),
+                ("selected", f"fg:{config["ui"]["default_color"]}"),
                 ("instruction", ""),
                 ("text", ""),
             ])).ask()

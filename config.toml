@@ -1,0 +1,10 @@
+[ui]
+default_color = "#62a874"
+instruction_text = "Подсказка: используйте стрелки на клавиатуре, чтобы изменить выбор. Нажмите Enter, чтобы подтвердить выбор."
+
+[database]
+database_directory = "data"
+database_file = "database.db"
+
+[limitations]
+max_length_of_task = 150

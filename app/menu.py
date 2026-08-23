@@ -5,6 +5,8 @@ import logging
 import questionary
 from pathlib import Path
 
+config = load_config()
+
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 
 DATA_DIR = PROJECT_DIR / "data"
@@ -21,16 +23,16 @@ def show_tasks_by_filter(user: str, tasks: list[dict[str, str]]) -> None:
             "Не выполнено",
             "Вывести все"
         ],
-        instruction="Чтобы выбрать действие, используйте стрелки на клавиатуре. Нажмите Enter, чтобы подтвердить выбор.",
+        instruction=config["ui"]["instruction_text"],
         use_indicator=True,
         show_selected=True,
         style=questionary.Style([
-            ("qmark", "fg:#62a874"),       
+            ("qmark", f"fg:{config["ui"]["default_color"]}"),       
             ("question", "bold"),             
-            ("answer", "fg:#62a874 bold"), 
-            ("pointer", "fg:#62a874 bold"),     
-            ("highlighted", "fg:#000000 bg:#62a874"),
-            ("selected", "fg:#62a874"),
+            ("answer", f"fg:{config["ui"]["default_color"]} bold"), 
+            ("pointer", f"fg:{config["ui"]["default_color"]} bold"),     
+            ("highlighted", f"fg:#000000 bg:{config["ui"]["default_color"]}"),
+            ("selected", f"fg:{config["ui"]["default_color"]}"),
             ("instruction", ""),
             ("text", ""),
         ])).ask()
@@ -58,16 +60,16 @@ def add_new_task(user: str) -> None:
                     "Продолжить",
                     "Выйти в меню"
                 ],
-                instruction="Чтобы выбрать действие, используйте стрелки на клавиатуре. Нажмите Enter, чтобы подтвердить выбор.",
+                instruction=config["ui"]["instruction_text"],
                 use_indicator=True,
                 show_selected=True,
                 style=questionary.Style([
-                    ("qmark", "fg:#62a874"),       
+                    ("qmark", f"fg:{config["ui"]["default_color"]}"),       
                     ("question", "bold"),             
-                    ("answer", "fg:#62a874 bold"), 
-                    ("pointer", "fg:#62a874 bold"),     
-                    ("highlighted", "fg:#000000 bg:#62a874"),
-                    ("selected", "fg:#62a874"),
+                    ("answer", f"fg:{config["ui"]["default_color"]} bold"), 
+                    ("pointer", f"fg:{config["ui"]["default_color"]} bold"),     
+                    ("highlighted", f"fg:#000000 bg:{config["ui"]["default_color"]}"),
+                    ("selected", f"fg:{config["ui"]["default_color"]}"),
                     ("instruction", ""),
                     ("text", ""),
                 ])).ask()
@@ -121,16 +123,16 @@ def change_task(user, tasks: list[dict[str, str]]) -> None:
                     "Дедлайн",
                     "Статус"
                 ],
-                instruction="Чтобы выбрать действие, используйте стрелки на клавиатуре. Нажмите Enter, чтобы подтвердить выбор.",
+                instruction=config["ui"]["instruction_text"],
                 use_indicator=True,
                 show_selected=True,
                 style=questionary.Style([
-                    ("qmark", "fg:#62a874"),       
+                    ("qmark", f"fg:{config["ui"]["default_color"]}"),       
                     ("question", "bold"),             
-                    ("answer", "fg:#62a874 bold"), 
-                    ("pointer", "fg:#62a874 bold"),     
-                    ("highlighted", "fg:#000000 bg:#62a874"),
-                    ("selected", "fg:#62a874"),
+                    ("answer", f"fg:{config["ui"]["default_color"]} bold"), 
+                    ("pointer", f"fg:{config["ui"]["default_color"]} bold"),     
+                    ("highlighted", f"fg:#000000 bg:{config["ui"]["default_color"]}"),
+                    ("selected", f"fg:{config["ui"]["default_color"]}"),
                     ("instruction", ""),
                     ("text", ""),
                 ])).ask()
@@ -148,18 +150,14 @@ def change_task(user, tasks: list[dict[str, str]]) -> None:
                     type_text(f"Дедлайн в задаче с идентификатором №{task_to_change["id"]} успешно изменен!")
                     break
             elif action == "Статус":
-                type_text("Введите новый статус задачи")
-                new_status = input()
-                try:
-                    validate_status(new_status)
-                except ValueError as error:
-                    type_text("Неправильный дедлайн!")
-                    logging.warning(f"Пользователь ввел неправильную дату: {error}")
+                if task_to_change["status"] == "выполнено":
+                    logging.info(f"Пользователь поменял данные параметр status в {task_to_change["id"]} с 'выполнено' на 'не выполнено'")                    
+                    write_new_status(task_to_change["id"], "не выполнено", TASKS_FILE)
                 else:
-                    logging.info(f"Пользователь поменял данные параметр status в {task_to_change["id"]} с {task_to_change["status"]} на {new_status}")                    
-                    write_new_status(task_to_change["id"], new_status, TASKS_FILE)
-                    type_text(f"Статус в задаче с идентификатором №{task_to_change["id"]} успешно изменен!")
-                    break
+                    logging.info(f"Пользователь поменял данные параметр status в {task_to_change["id"]} с 'не выполнено' на 'выполнено'")                    
+                    write_new_status(task_to_change["id"], "выполнено", TASKS_FILE)
+                type_text(f"Статус в задаче с идентификатором №{task_to_change["id"]} успешно изменен!")
+                break                                        
     else:
         type_text("Такой задачи не существует!")
 
