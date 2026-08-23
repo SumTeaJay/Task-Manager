@@ -1,29 +1,13 @@
 from .show_info import type_text
-from .storage import write_new_user, load_config
+from .interaction_with_database import write_new_user
+from .check_the_parameters import check_login, check_password
+from .launch_of_program import determine_directory_of_database, load_config
+
 import logging
 import questionary
-from pathlib import Path
 
 config = load_config()
-
-PROJECT_DIR = Path(__file__).resolve().parent.parent
-
-DATA_DIR = PROJECT_DIR / "data"
-TASKS_FILE = DATA_DIR / "database.db"
-
-def check_login(users: list[dict[str, str]], login: str) -> bool:
-    for user in users:
-        if login == user["login"]:
-            return True
-    return False
-
-def check_password(users: dict[str, str], password: str, login = None) -> bool:
-    for user in users:
-        if password == user["password"] and login is None:
-            return True    
-        elif password == user["password"] and login == user["login"]:
-            return True
-    return False
+DATABASE_FILE = determine_directory_of_database()
 
 def create_user(users: list[dict[str, str]]) -> dict[str, str]:
     while True:
@@ -39,7 +23,7 @@ def create_user(users: list[dict[str, str]]) -> dict[str, str]:
         if check_password(users, password):
             type_text("Такой пароль уже существует! Придумайте новый")
         else:
-            write_new_user({"login": login, "password": password}, TASKS_FILE)
+            write_new_user({"login": login, "password": password}, DATABASE_FILE)
             type_text("Пользователь создан!")
             logging.info(f"Создан новый пользователь - {login}.")
             return {"login": login, "password": password}

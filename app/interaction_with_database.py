@@ -1,16 +1,4 @@
 import sqlite3
-import tomllib
-
-def load_config() -> dict[str, str]:
-    with open("config.toml", "rb") as file:
-        return tomllib.load(file)
-
-def get_values(user):
-    name = input("Введите название задачи: ")
-    status = input("Введите статус задачи: выполнено/не выполнено ")
-    deadline = input("Введите дедлайн в формате ДД.ММ.ГГГГ:")
-
-    return {"user": user, "name": name, "status": status, "deadline": deadline}
 
 def write_new_task(new_task: dict[str, str], file_name: str):
     with sqlite3.connect(file_name) as connection:

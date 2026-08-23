@@ -1,31 +1,18 @@
 import logging
 import questionary
 
-from app import read_users, read_tasks, validate_task, type_text, show_tasks_by_filter, add_new_task, change_task, delete_task, enter_program, load_config
-from pathlib import Path
+from app import read_users, read_tasks, validate_task, type_text, show_tasks_by_filter, add_new_task, change_task, delete_task, enter_program, load_config, determine_directory_of_database, create_log_file
 
 config = load_config()
-
-PROJECT_DIR = Path(__file__).resolve().parent
-DATA_DIR = PROJECT_DIR / config["database"]["database_directory"]
-
-TASKS_FILE = DATA_DIR / config["database"]["database_file"]
-LOG_FILE = PROJECT_DIR / "app.log"
-
-logging.basicConfig(
-    filename="app.log",
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    datefmt="%d.%m.%Y %H:%M:%S",
-    encoding="utf-8"
-)
+DATABASE_FILE = determine_directory_of_database()
+create_log_file()
 
 def main() -> None:
     try:
-        users = read_users(TASKS_FILE)
+        users = read_users(DATABASE_FILE)
         user = enter_program(users)
 
-        tasks = read_tasks(TASKS_FILE)
+        tasks = read_tasks(DATABASE_FILE)
 
         for task in tasks:
             validate_task(task)
@@ -39,7 +26,7 @@ def main() -> None:
 
     while True:
         try:
-            tasks = read_tasks(TASKS_FILE)
+            tasks = read_tasks(DATABASE_FILE)
             for task in tasks:
                 validate_task(task)
         except (OSError, ValueError, KeyError) as error:
@@ -102,10 +89,6 @@ def main() -> None:
             type_text("До скорой встречи!")
             logging.info("Пользователь вышел из программы.")
             break
-                
-        # else:
-        #     type_text("Что?\nТебе нужно ввести число от одного до пяти, чтобы выполнить действие")
-        #     logging.warning("Пользователь ввел неверную команду в меню.")
 
 if __name__ == "__main__":
     main()
