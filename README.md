@@ -1,7 +1,7 @@
 # Task-Manager
 Консольный проект, позволяющий выводить, изменять и удалять задачи для определенных пользователей.
 
-# Возможности проекта
+## Возможности проекта
 - Создавать нового пользователя
 - Входить в аккаунт
 - Выводить список задач для пользователя по трем фильтрам: выполнено/не выполнено/вывести все
@@ -10,22 +10,26 @@
 - Удалять задачи
 - Выходить из программы
 
-# Требования
+## Требования
 Python 3.14+
 
 ## Установка
+
+Перейдите в папку, куда хотите установить проект, указав полный путь:
+```bash
+cd C:\Users\example
+```
 
 Клонируйте репозиторий:
 
 ```bash
 git clone https://github.com/SumTeaJay/Task-Manager.git
-cd movie-library
 ```
 
 Создайте виртуальное окружение:
 
 ```bash
-python -m venv venv
+python -m venv .venv
 ```
 
 Активируйте его в PowerShell:
@@ -34,17 +38,16 @@ python -m venv venv
 .\venv\Scripts\Activate.ps1
 ```
 
-Установите проект и зависимости для разработки:
+Установите зависимости для разработки:
 
 ```bash
-pip install pytest
+pip install -r requirements.txt
 ```
 
-P.S Полный список зависимостей находится в requirements.txt
 
 ## Запуск
 
-Запускайте приложение из папки app:
+Введите следующую команду:
 
 ```bash
 python main.py
@@ -56,23 +59,32 @@ python main.py
 movie-library/
 ├── app/
 │   ├── authorization.py
+│   ├── check_the_parameters.py
+│   ├── get_the_parameters.py
+│   ├── interaction_with_database.py
+│   ├── launch_of_program.py
 │   ├── menu.py
 │   ├── show_info.py
-│   ├── storage.py
 │   ├── ui.py
 │   └── validators.py
 ├── tests/
 ├── data/
-│   └── movies.db
+│   └── database.db
 ├── main.py
 ├── pyproject.toml
+├── config.toml
+├── app.log
+├── requirements.txt
 └── README.md
 ```
 
 - `app/authorization.py` — авторизация пользователя.
+- `app/check_the_parameters.py` — обработка неправильных данных и поиск данных
+- `app/get_the_parameters.py` — получение данных
+- `app/interaction_with_database.py` — работа с базой данных.
+- `app/launch_of_program.py` — подготовка программы к работе.
 - `app/menu.py` — работа меню.
 - `app/show_info.py` — вывод данных.
-- `app/storage.py` — работа с файлами.
 - `app/ui.py` — эффект печатания на клавиатуре.
 - `app/validators.py` — проверка данных.
 - `tests/` — автоматические тесты.
