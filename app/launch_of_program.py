@@ -11,8 +11,8 @@ def load_config() -> dict[str, str]:
 def determine_directory_of_database():
     config = load_config()
     PROJECT_DIR = Path(__file__).resolve().parent.parent
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
     DATA_DIR = PROJECT_DIR / config["database"]["database_directory"]
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
     DATABASE_FILE = DATA_DIR / config["database"]["database_file"]
 
     return DATABASE_FILE

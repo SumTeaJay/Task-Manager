@@ -33,7 +33,7 @@ def enter_program(users: list[dict[str, str]]) -> str:
             while True:
                 type_text("Введите пароль: ")
                 password = input()
-                if check_password(users, password, login):
+                if check_password(users, password):
                     return login
                 else:
                     type_text("Неверный пароль!")

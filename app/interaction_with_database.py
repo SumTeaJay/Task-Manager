@@ -51,6 +51,7 @@ def read_tasks(file_name: str) -> list[dict[str, str]]:
     with sqlite3.connect(file_name) as connection:
         connection.row_factory = sqlite3.Row
         cur = connection.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
         cur.execute("""
             CREATE TABLE IF NOT EXISTS tasks (
                 id INTEGER PRIMARY KEY,
@@ -58,13 +59,10 @@ def read_tasks(file_name: str) -> list[dict[str, str]]:
                 name VARCHAR(150),
                 status TEXT,
                 deadline TEXT,
-                PRAGMA foreign_keys = ON;
-                FOREIGN KEY (user) REFERENCES users (login)
+                FOREIGN KEY (user) REFERENCES users(login)
             );
         """)
-        cur.execute("""
-            SELECT * FROM tasks;
-        """)
+        cur.execute("SELECT * FROM tasks;")
 
         tasks = []
         rows = cur.fetchall()
